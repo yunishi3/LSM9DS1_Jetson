@@ -32,7 +32,7 @@ Distributed as-is; no warranty is given.
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 #include <linux/i2c.h>
-#include <i2c.h>
+//#include <i2c.h>
 #include "LSM9DS1.h"
 #include "LSM9DS1_Registers.h"
 #include "LSM9DS1_Types.h"
