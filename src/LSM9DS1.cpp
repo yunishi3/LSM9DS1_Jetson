@@ -37,7 +37,9 @@ Distributed as-is; no warranty is given.
 #include "LSM9DS1_Registers.h"
 #include "LSM9DS1_Types.h"
 
+
 float magSensitivity[4] = {0.00014, 0.00029, 0.00043, 0.00058};
+char devicename[] = "/dev/i2c-8"; //nano -> i2c-1, agx-xavier -> i2c-8
 
 LSM9DS1::LSM9DS1()
 {
@@ -1077,7 +1079,7 @@ void LSM9DS1::initI2C()
 // Wire.h read and write protocols
 void LSM9DS1::I2CwriteByte(uint8_t address, uint8_t subAddress, uint8_t data)
 {
-    int32_t _fd = open("/dev/i2c-1", O_RDWR);
+    int32_t _fd = open(devicename, O_RDWR);
     if (_fd < 0) {
         fprintf(stderr, "Error: I2CSetup failed\n");
         close(_fd);
@@ -1113,7 +1115,7 @@ void LSM9DS1::I2CwriteByte(uint8_t address, uint8_t subAddress, uint8_t data)
 
 uint8_t LSM9DS1::I2CreadByte(uint8_t address, uint8_t subAddress)
 {
-    int32_t _fd = open("/dev/i2c-1", O_RDWR);
+    int32_t _fd = open(devicename, O_RDWR);
     if (_fd < 0) {
         fprintf(stderr, "Error: I2CSetup failed\n");
         close(_fd);
@@ -1141,7 +1143,7 @@ uint8_t LSM9DS1::I2CreadByte(uint8_t address, uint8_t subAddress)
 
 uint8_t LSM9DS1::I2CreadBytes(uint8_t address, uint8_t subAddress, uint8_t * dest, uint8_t count)
 {
-    int32_t _fd = open("/dev/i2c-1", O_RDWR);
+    int32_t _fd = open(devicename, O_RDWR);
     if (_fd < 0) {
         fprintf(stderr, "Error: I2CSetup failed\n");
         close(_fd);
