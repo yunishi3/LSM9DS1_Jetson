@@ -37,6 +37,22 @@ Distributed as-is; no warranty is given.
 #include "LSM9DS1_Registers.h"
 #include "LSM9DS1_Types.h"
 
+// 2023.5.30 fix the Sensor Sensitivity Constants
+#define FIX_SENSOR_SENSITIVITY_CONSTANTS_20230530
+
+#ifdef FIX_SENSOR_SENSITIVITY_CONSTANTS_20230530
+// from https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library
+// Sensor Sensitivity Constants
+// Values set according to the typical specifications provided in
+// table 3 of the LSM9DS1 datasheet. (pg 12)
+#define SENSITIVITY_ACCELEROMETER_2  0.000061
+#define SENSITIVITY_ACCELEROMETER_4  0.000122
+#define SENSITIVITY_ACCELEROMETER_8  0.000244
+#define SENSITIVITY_ACCELEROMETER_16 0.000732
+#define SENSITIVITY_GYROSCOPE_245    0.00875
+#define SENSITIVITY_GYROSCOPE_500    0.0175
+#define SENSITIVITY_GYROSCOPE_2000   0.07
+#endif  // FIX_SENSOR_SENSITIVITY_CONSTANTS_20230530
 
 float magSensitivity[4] = {0.00014, 0.00029, 0.00043, 0.00058};
 char devicename[] = "/dev/i2c-8"; //nano -> i2c-1, agx-xavier -> i2c-8
@@ -750,12 +766,49 @@ void LSM9DS1::setMagODR(uint8_t mRate)
 
 void LSM9DS1::calcgRes()
 {
+#ifndef FIX_SENSOR_SENSITIVITY_CONSTANTS_20230530
     gRes = ((float) settings.gyro.scale) / 32768.0;
+#else   // FIX_SENSOR_SENSITIVITY_CONSTANTS_20230530
+    switch (settings.gyro.scale)
+    {
+        case 245:
+            gRes = SENSITIVITY_GYROSCOPE_245;
+            break;
+        case 500:
+            gRes = SENSITIVITY_GYROSCOPE_500;
+            break;
+        case 2000:
+            gRes = SENSITIVITY_GYROSCOPE_2000;
+            break;
+        default:
+            break;
+	}
+#endif  // FIX_SENSOR_SENSITIVITY_CONSTANTS_20230530
 }
 
 void LSM9DS1::calcaRes()
 {
+#ifndef FIX_SENSOR_SENSITIVITY_CONSTANTS_20230530
     aRes = ((float) settings.accel.scale) / 32768.0;
+#else   // FIX_SENSOR_SENSITIVITY_CONSTANTS_20230530
+    switch (settings.accel.scale)
+    {
+        case 2:
+            aRes = SENSITIVITY_ACCELEROMETER_2;
+            break;
+        case 4:
+            aRes = SENSITIVITY_ACCELEROMETER_4;
+            break;
+        case 8:
+            aRes = SENSITIVITY_ACCELEROMETER_8;
+            break;
+        case 16:
+            aRes = SENSITIVITY_ACCELEROMETER_16;
+            break;
+        default:
+            break;
+    }
+#endif  // FIX_SENSOR_SENSITIVITY_CONSTANTS_20230530
 }
 
 void LSM9DS1::calcmRes()
